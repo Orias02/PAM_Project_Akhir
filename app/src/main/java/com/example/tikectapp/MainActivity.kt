@@ -1,0 +1,30 @@
+package com.example.ticketapp
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.example.ticketapp.navigation.AppNavigation
+import com.example.ticketapp.ui.theme.TicketAppTheme
+
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
+
+        setContent {
+            TicketAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    AppNavigation()
+                }
+            }
+        }
+    }
+}
