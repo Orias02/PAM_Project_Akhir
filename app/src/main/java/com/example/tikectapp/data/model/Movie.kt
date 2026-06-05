@@ -31,6 +31,7 @@ object MovieGenre {
     const val HORROR = "Horror"
     const val ANIMATION = "Animation"
     const val DOCUMENTARY = "Documentary"
+    const val BAPAK = "Bapak"
 
     val allGenres = listOf(ALL, ACTION, DRAMA, COMEDY, HORROR, ANIMATION, DOCUMENTARY)
 }
