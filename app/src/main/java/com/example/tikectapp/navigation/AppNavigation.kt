@@ -15,6 +15,7 @@ import com.example.ticketapp.ui.dashboard.MovieDetailScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.example.ticketapp.ui.booking.SeatSelectionScreen
 
 @Composable
 fun AppNavigation(
@@ -161,5 +162,27 @@ fun AppNavigation(
                 }
             )
         }
+
+        composable("seat_selection") {
+
+            SeatSelectionScreen(
+
+                onBackClick = {
+                    navController.popBackStack()
+                },
+
+                onContinueClick = {
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = false
+                        }
+
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        }
     }
-}
