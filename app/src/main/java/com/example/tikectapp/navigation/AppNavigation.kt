@@ -104,6 +104,7 @@ fun AppNavigation(
         }
 
         // ADD MOVIE
+        // ADD MOVIE
         composable("add_movie") {
 
             AddEditMovieScreen(
@@ -113,12 +114,20 @@ fun AppNavigation(
                 },
 
                 onSaveSuccess = {
-                    navController.popBackStack()
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
                 }
             )
         }
 
-        // EDIT MOVIE
+// EDIT MOVIE
         composable(
             route = "edit_movie/{movieId}",
             arguments = listOf(
@@ -140,7 +149,15 @@ fun AppNavigation(
                 },
 
                 onSaveSuccess = {
-                    navController.popBackStack()
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
                 }
             )
         }
