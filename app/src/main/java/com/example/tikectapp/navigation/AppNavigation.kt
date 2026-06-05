@@ -9,13 +9,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ticketapp.data.repository.AuthRepository
 import com.example.ticketapp.ui.auth.AuthScreen
+import com.example.ticketapp.ui.booking.SeatSelectionScreen
 import com.example.ticketapp.ui.dashboard.AddEditMovieScreen
 import com.example.ticketapp.ui.dashboard.DashboardScreen
 import com.example.ticketapp.ui.dashboard.MovieDetailScreen
+import com.example.tikectapp.ui.booking.ScheduleScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.ticketapp.ui.booking.SeatSelectionScreen
 
 @Composable
 fun AppNavigation(
@@ -100,11 +101,14 @@ fun AppNavigation(
 
                 onEditClick = {
                     navController.navigate("edit_movie/$movieId")
+                },
+
+                onBookingClick = {
+                    navController.navigate("schedule")
                 }
             )
         }
 
-        // ADD MOVIE
         // ADD MOVIE
         composable("add_movie") {
 
@@ -128,7 +132,7 @@ fun AppNavigation(
             )
         }
 
-// EDIT MOVIE
+        // EDIT MOVIE
         composable(
             route = "edit_movie/{movieId}",
             arguments = listOf(
@@ -163,6 +167,23 @@ fun AppNavigation(
             )
         }
 
+        // SCHEDULE SCREEN
+        composable("schedule") {
+
+            ScheduleScreen(
+
+                onBackClick = {
+                    navController.popBackStack()
+                },
+
+                onBookingClick = {
+
+                    navController.navigate("seat_selection")
+                }
+            )
+        }
+
+        // SEAT SELECTION
         composable("seat_selection") {
 
             SeatSelectionScreen(
@@ -184,5 +205,5 @@ fun AppNavigation(
                 }
             )
         }
-        }
     }
+}

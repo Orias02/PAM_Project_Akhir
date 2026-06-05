@@ -72,6 +72,18 @@ fun AddEditMovieScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     // State untuk dropdown genre
     var genreDropdownExpanded by remember { mutableStateOf(false) }
+    var movieSchedules by remember {
+        mutableStateOf("")
+    }
+    OutlinedTextField(
+        value = movieSchedules,
+        onValueChange = {
+            movieSchedules = it
+        },
+        label = {
+            Text("Jadwal Film")
+        }
+    )
 
     // ── Delete Confirmation Dialog ────────────────────────────────────────────
     if (showDeleteDialog) {
@@ -114,6 +126,7 @@ fun AddEditMovieScreen(
                     Text("Batal")
                 }
             }
+
         )
     }
 
