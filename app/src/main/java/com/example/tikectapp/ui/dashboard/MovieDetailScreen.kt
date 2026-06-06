@@ -46,7 +46,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 fun MovieDetailScreen(
     movieId: String,
     onBackClick: () -> Unit,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    onBookingClick: () -> Unit
 ) {
 
     val repository = remember { MovieRepository() }
@@ -169,8 +170,9 @@ fun MovieDetailScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = {},
-                        modifier = Modifier.fillMaxWidth()
+                        onClick = {
+                            onBookingClick()
+                        },
                     ) {
                         Text("Booking")
                     }
@@ -196,5 +198,6 @@ fun MovieDetailScreen(
                 }
             }
         }
+
     }
 }

@@ -9,9 +9,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ticketapp.data.repository.AuthRepository
 import com.example.ticketapp.ui.auth.AuthScreen
+import com.example.ticketapp.ui.booking.SeatSelectionScreen
 import com.example.ticketapp.ui.dashboard.AddEditMovieScreen
 import com.example.ticketapp.ui.dashboard.DashboardScreen
 import com.example.ticketapp.ui.dashboard.MovieDetailScreen
+import com.example.tikectapp.ui.booking.ScheduleScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,6 +101,10 @@ fun AppNavigation(
 
                 onEditClick = {
                     navController.navigate("edit_movie/$movieId")
+                },
+
+                onBookingClick = {
+                    navController.navigate("schedule")
                 }
             )
         }
@@ -113,7 +119,15 @@ fun AppNavigation(
                 },
 
                 onSaveSuccess = {
-                    navController.popBackStack()
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -140,7 +154,54 @@ fun AppNavigation(
                 },
 
                 onSaveSuccess = {
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        // SCHEDULE SCREEN
+        composable("schedule") {
+
+            ScheduleScreen(
+
+                onBackClick = {
                     navController.popBackStack()
+                },
+
+                onBookingClick = {
+
+                    navController.navigate("seat_selection")
+                }
+            )
+        }
+
+        // SEAT SELECTION
+        composable("seat_selection") {
+
+            SeatSelectionScreen(
+
+                onBackClick = {
+                    navController.popBackStack()
+                },
+
+                onContinueClick = {
+
+                    navController.navigate("dashboard") {
+
+                        popUpTo("dashboard") {
+                            inclusive = false
+                        }
+
+                        launchSingleTop = true
+                    }
                 }
             )
         }
