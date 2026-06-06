@@ -1,12 +1,19 @@
 package com.example.tikectapp.ui.booking
 
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ScheduleScreen(
     onBackClick: () -> Unit,
@@ -48,115 +55,200 @@ fun ScheduleScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
 
         Text(
-            text = "Pilih Jadwal",
-            style = MaterialTheme.typography.headlineSmall
+            text = "🎬 Pilih Jadwal Film",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Pilih tanggal, jam tayang, dan lokasi bioskop",
+            color = Color.Gray
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text("Tanggal")
+        // TANGGAL
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
 
-        dates.forEach { date ->
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = selectedDate == date,
-                        onClick = {
-                            selectedDate = date
-                        }
-                    )
-                    .padding(vertical = 4.dp)
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
 
-                RadioButton(
-                    selected = selectedDate == date,
-                    onClick = {
-                        selectedDate = date
-                    }
+                Text(
+                    text = "📅 Pilih Tanggal",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
 
-                Text(date)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    dates.forEach { date ->
+
+                        FilterChip(
+                            selected = selectedDate == date,
+                            onClick = {
+                                selectedDate = date
+                            },
+                            label = {
+                                Text(date)
+                            }
+                        )
+                    }
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Jam Tayang")
+        // JAM TAYANG
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
 
-        times.forEach { time ->
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = selectedTime == time,
-                        onClick = {
-                            selectedTime = time
-                        }
-                    )
-                    .padding(vertical = 4.dp)
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
 
-                RadioButton(
-                    selected = selectedTime == time,
-                    onClick = {
-                        selectedTime = time
-                    }
+                Text(
+                    text = "🕒 Jam Tayang",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
 
-                Text(time)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    times.forEach { time ->
+
+                        FilterChip(
+                            selected = selectedTime == time,
+                            onClick = {
+                                selectedTime = time
+                            },
+                            label = {
+                                Text(time)
+                            }
+                        )
+                    }
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Lokasi")
+        // LOKASI
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
 
-        locations.forEach { location ->
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = selectedLocation == location,
-                        onClick = {
-                            selectedLocation = location
-                        }
-                    )
-                    .padding(vertical = 4.dp)
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
 
-                RadioButton(
-                    selected = selectedLocation == location,
-                    onClick = {
-                        selectedLocation = location
-                    }
+                Text(
+                    text = "📍 Lokasi Bioskop",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
 
-                Text(location)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                locations.forEach { location ->
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        RadioButton(
+                            selected = selectedLocation == location,
+                            onClick = {
+                                selectedLocation = location
+                            }
+                        )
+
+                        Text(
+                            text = location,
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // RINGKASAN
+        if (
+            selectedDate.isNotEmpty() &&
+            selectedTime.isNotEmpty() &&
+            selectedLocation.isNotEmpty()
+        ) {
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFE8F5E9)
+                )
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Text(
+                        text = "🎟️ Ringkasan Booking",
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text("Tanggal : $selectedDate")
+                    Text("Jam : $selectedTime")
+                    Text("Lokasi : $selectedLocation")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         Button(
             onClick = {
                 onBookingClick()
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp),
             enabled =
                 selectedDate.isNotEmpty() &&
                         selectedTime.isNotEmpty() &&
                         selectedLocation.isNotEmpty()
         ) {
 
-            Text("BOOKING NOW")
+            Text(
+                text = "BOOKING NOW 🎟️"
+            )
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }
