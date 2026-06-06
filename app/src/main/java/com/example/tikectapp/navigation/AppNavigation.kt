@@ -104,7 +104,7 @@ fun AppNavigation(
                 },
 
                 onBookingClick = {
-                    navController.navigate("schedule")
+                    navController.navigate("schedule/$movieId")
                 }
             )
         }
@@ -168,9 +168,52 @@ fun AppNavigation(
         }
 
         // SCHEDULE SCREEN
-        composable("schedule") {
+        composable(
+            route = "schedule/{movieId}",
+            arguments = listOf(
+                navArgument("movieId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+
+            val movieId =
+                backStackEntry.arguments?.getString("movieId") ?: ""
+
+
+            val availableLocations = when (movieId) {
+
+                // UPIN IPIN
+                "926443eb-005c-4910-9520-9db9492b6871" -> listOf(
+                    "Malang Town Square",
+                    "Dieng Plaza"
+                )
+
+                // TOY STORY
+                "9798cb27-7c31-4428-abcb-34ab71aae3c6" -> listOf(
+                    "Malang Town Square",
+                    "Cyber Mall"
+                )
+
+                // AVENGERS
+                "aa75663c-260b-4787-b512-63ddaf28eff2" -> listOf(
+                    "Malang Town Square",
+                    "Cyber Mall",
+                    "Dieng Plaza"
+                )
+
+                // INTERSTELLAR
+                "af7aca44-9f22-401e-8836-52d849c8d9bb" -> listOf(
+                    "Malang Town Square",
+                    "Cyber Mall"
+                )
+
+                else -> emptyList()
+            }
 
             ScheduleScreen(
+
+                availableLocations = availableLocations,
 
                 onBackClick = {
                     navController.popBackStack()

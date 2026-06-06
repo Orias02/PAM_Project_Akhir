@@ -3,34 +3,16 @@ package com.example.ticketapp.ui.dashboard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.ticketapp.data.model.CinemaLocation
 import com.example.ticketapp.data.model.Movie
 import com.example.ticketapp.ui.theme.NavyDark
 import com.example.ticketapp.ui.theme.SageGreenDark
 import com.example.ticketapp.ui.theme.SageGreenLight
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(),
@@ -57,20 +41,30 @@ fun DashboardScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // tambah tombol semua
+    val locations = listOf("Semua") +
+            CinemaLocation.allLocations
+
     Scaffold(
 
         floatingActionButton = {
 
-            // Tombol tambah film hanya untuk admin
             if (uiState.isAdmin) {
 
-                FloatingActionButton(
-                    onClick = onAddMovieClick
+                Column(
+                    modifier = Modifier.padding(bottom = 12.dp),
+                    horizontalAlignment = Alignment.End
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Movie"
-                    )
+
+                    FloatingActionButton(
+                        onClick = onAddMovieClick
+                    ) {
+
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Movie"
+                        )
+                    }
                 }
             }
         }
@@ -83,6 +77,7 @@ fun DashboardScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+
                 CircularProgressIndicator()
             }
 
@@ -99,19 +94,72 @@ fun DashboardScreen(
 
                 item {
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(
+                        modifier = Modifier.height(12.dp)
+                    )
 
                     DashboardHeader(
                         onLogoutClick = onLogoutClick
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(16.dp)
+                    )
+
+                    // =========================
+                    // LOKASI HORIZONTAL
+                    // =========================
+
+                    Text(
+                        text = "Lokasi",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(12.dp)
+                    )
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        items(locations) { location ->
+
+                            val isSelected =
+                                uiState.selectedLocation == location
+
+                            FilterChip(
+
+                                selected = isSelected,
+
+                                onClick = {
+
+                                    viewModel.changeLocation(location)
+                                },
+
+                                label = {
+
+                                    Text(location)
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
                 }
+
+                // =========================
+                // MOVIE LIST
+                // =========================
 
                 items(uiState.movies) { movie ->
 
                     MovieCard(
                         movie = movie,
+
                         onClick = {
                             onMovieClick(movie.id)
                         }
@@ -119,7 +167,10 @@ fun DashboardScreen(
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(80.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(100.dp)
+                    )
                 }
             }
         }

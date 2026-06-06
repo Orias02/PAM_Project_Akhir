@@ -14,18 +14,30 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class DashboardUiState(
+
     val isLoading: Boolean = false,
+
+    // semua movie dari database
+    val allMovies: List<Movie> = emptyList(),
+
+    // movie yang tampil di dashboard
     val movies: List<Movie> = emptyList(),
+
     val currentUser: UserProfile? = null,
+
     val errorMessage: String? = null,
 
-    // penting buat tombol admin
-    val isAdmin: Boolean = false
+    // checker admin
+    val isAdmin: Boolean = false,
+
+    // lokasi default
+    val selectedLocation: String = "Semua"
 )
 
 class DashboardViewModel : ViewModel() {
 
     private val movieRepository = MovieRepository()
+
     private val authRepository = AuthRepository()
 
     private val _uiState = MutableStateFlow(
@@ -38,9 +50,15 @@ class DashboardViewModel : ViewModel() {
         _uiState.asStateFlow()
 
     init {
+
         loadCurrentUser()
+
         loadMovies()
     }
+
+    // =========================
+    // LOAD USER
+    // =========================
 
     private fun loadCurrentUser() {
 
@@ -60,13 +78,17 @@ class DashboardViewModel : ViewModel() {
             }
 
             _uiState.value = _uiState.value.copy(
+
                 currentUser = user,
 
-                // INI YANG BIKIN LANGSUNG UPDATE
                 isAdmin = user.role == UserRole.ADMIN
             )
         }
     }
+
+    // =========================
+    // LOAD MOVIES
+    // =========================
 
     fun loadMovies() {
 
@@ -82,22 +104,85 @@ class DashboardViewModel : ViewModel() {
 
                 onSuccess = { movies ->
 
+                    val selectedLocation =
+                        _uiState.value.selectedLocation
+
+                    val filteredMovies =
+
+                        if (selectedLocation == "Semua") {
+
+                            // tampilkan semua film
+                            movies
+
+                        } else {
+
+                            // filter berdasarkan lokasi
+                            movies.filter { movie ->
+
+                                movie.locations.contains(
+                                    selectedLocation
+                                )
+                            }
+                        }
+
                     _uiState.value = _uiState.value.copy(
+
                         isLoading = false,
-                        movies = movies
+
+                        // simpan semua movie
+                        allMovies = movies,
+
+                        // movie hasil filter
+                        movies = filteredMovies
                     )
                 },
 
                 onFailure = { error ->
 
                     _uiState.value = _uiState.value.copy(
+
                         isLoading = false,
+
                         errorMessage = error.message
                     )
                 }
             )
         }
     }
+
+    // =========================
+    // CHANGE LOCATION
+    // =========================
+
+    fun changeLocation(location: String) {
+
+        val filteredMovies =
+
+            if (location == "Semua") {
+
+                // tampilkan semua film
+                _uiState.value.allMovies
+
+            } else {
+
+                // filter movie berdasarkan lokasi
+                _uiState.value.allMovies.filter { movie ->
+
+                    movie.locations.contains(location)
+                }
+            }
+
+        _uiState.value = _uiState.value.copy(
+
+            selectedLocation = location,
+
+            movies = filteredMovies
+        )
+    }
+
+    // =========================
+    // CHECK ADMIN
+    // =========================
 
     fun isAdmin(): Boolean {
 
