@@ -38,16 +38,15 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.ticketapp.data.model.Movie
 import com.example.ticketapp.data.repository.AuthRepository
 import com.example.ticketapp.data.repository.MovieRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import androidx.compose.material3.ExperimentalMaterial3Api
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(
     movieId: String,
     onBackClick: () -> Unit,
     onEditClick: () -> Unit,
-    onBookingClick: () -> Unit
+    onBookingClick: (String) -> Unit // 1. PERUBAHAN: Menerima parameter String judul film
 ) {
 
     val repository = remember { MovieRepository() }
@@ -171,8 +170,10 @@ fun MovieDetailScreen(
 
                     Button(
                         onClick = {
-                            onBookingClick()
+                            // 2. PERUBAHAN: Lempar judul film (it.title) dari data Supabase secara dinamis
+                            onBookingClick(it.title)
                         },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Booking")
                     }
@@ -198,6 +199,5 @@ fun MovieDetailScreen(
                 }
             }
         }
-
     }
 }
