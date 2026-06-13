@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 fun AppNavigation(
     modifier: Modifier = Modifier
 ) {
-
     val navController = rememberNavController()
     val authRepository = AuthRepository()
 
@@ -31,136 +30,81 @@ fun AppNavigation(
         startDestination = "auth",
         modifier = modifier
     ) {
-
-        // AUTH
+        // AUTH SCREEN
         composable("auth") {
-
             AuthScreen(
                 onLoginSuccess = {
-
                     navController.navigate("dashboard") {
-
-                        popUpTo("auth") {
-                            inclusive = true
-                        }
+                        popUpTo("auth") { inclusive = true }
                     }
                 }
             )
         }
 
-        // DASHBOARD
+        // DASHBOARD SCREEN
         composable("dashboard") {
-
             DashboardScreen(
-
                 onMovieClick = { movieId ->
                     navController.navigate("detail/$movieId")
                 },
-
                 onAddMovieClick = {
                     navController.navigate("add_movie")
                 },
-
                 onLogoutClick = {
-
                     CoroutineScope(Dispatchers.Main).launch {
-
                         authRepository.signOut()
-
                         navController.navigate("auth") {
-
-                            popUpTo("dashboard") {
-                                inclusive = true
-                            }
+                            popUpTo("dashboard") { inclusive = true }
                         }
                     }
                 }
             )
         }
 
-        // DETAIL MOVIE
+        // DETAIL MOVIE SCREEN
         composable(
             route = "detail/{movieId}",
-            arguments = listOf(
-                navArgument("movieId") {
-                    type = NavType.StringType
-                }
-            )
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val movieId =
-                backStackEntry.arguments?.getString("movieId") ?: ""
+            val movieId = backStackEntry.arguments?.getString("movieId") ?: ""
 
             MovieDetailScreen(
-
                 movieId = movieId,
-
-                onBackClick = {
-                    navController.popBackStack()
-                },
-
-                onEditClick = {
-                    navController.navigate("edit_movie/$movieId")
-                },
-
-                onBookingClick = {
-                    navController.navigate("schedule")
+                onBackClick = { navController.popBackStack() },
+                onEditClick = { navController.navigate("edit_movie/$movieId") },
+                // Menerima parameter title dari MovieDetailScreen untuk dioper ke Schedule
+                onBookingClick = { movieTitle ->
+                    navController.navigate("schedule/$movieTitle")
                 }
             )
         }
 
-        // ADD MOVIE
+        // ADD MOVIE SCREEN
         composable("add_movie") {
-
             AddEditMovieScreen(
-
-                onBackClick = {
-                    navController.popBackStack()
-                },
-
+                onBackClick = { navController.popBackStack() },
                 onSaveSuccess = {
-
                     navController.navigate("dashboard") {
-
-                        popUpTo("dashboard") {
-                            inclusive = true
-                        }
-
+                        popUpTo("dashboard") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
             )
         }
 
-        // EDIT MOVIE
+        // EDIT MOVIE SCREEN
         composable(
             route = "edit_movie/{movieId}",
-            arguments = listOf(
-                navArgument("movieId") {
-                    type = NavType.StringType
-                }
-            )
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
         ) { backStackEntry ->
-
-            val movieId =
-                backStackEntry.arguments?.getString("movieId")
+            val movieId = backStackEntry.arguments?.getString("movieId")
 
             AddEditMovieScreen(
-
                 movieId = movieId,
-
-                onBackClick = {
-                    navController.popBackStack()
-                },
-
+                onBackClick = { navController.popBackStack() },
                 onSaveSuccess = {
-
                     navController.navigate("dashboard") {
-
-                        popUpTo("dashboard") {
-                            inclusive = true
-                        }
-
+                        popUpTo("dashboard") { inclusive = true }
                         launchSingleTop = true
                     }
                 }
@@ -168,38 +112,46 @@ fun AppNavigation(
         }
 
         // SCHEDULE SCREEN
-        composable("schedule") {
+        composable(
+            route = "schedule/{movieTitle}",
+            arguments = listOf(navArgument("movieTitle") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val movieTitle = backStackEntry.arguments?.getString("movieTitle") ?: "Default Movie"
 
             ScheduleScreen(
-
-                onBackClick = {
-                    navController.popBackStack()
-                },
-
-                onBookingClick = {
-
-                    navController.navigate("seat_selection")
+                movieTitle = movieTitle,
+                onBackClick = { navController.popBackStack() },
+                // Mengirim 3 data jadwal pilihan user ke screen pemilihan kursi
+                onBookingClick = { date, time, location ->
+                    navController.navigate("seat_selection/$movieTitle/$date/$time/$location")
                 }
             )
         }
 
-        // SEAT SELECTION
-        composable("seat_selection") {
+        // SEAT SELECTION SCREEN
+        composable(
+            route = "seat_selection/{movieTitle}/{selectedDate}/{selectedTime}/{selectedLocation}",
+            arguments = listOf(
+                navArgument("movieTitle") { type = NavType.StringType },
+                navArgument("selectedDate") { type = NavType.StringType },
+                navArgument("selectedTime") { type = NavType.StringType },
+                navArgument("selectedLocation") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val movieTitle = backStackEntry.arguments?.getString("movieTitle") ?: ""
+            val selectedDate = backStackEntry.arguments?.getString("selectedDate") ?: ""
+            val selectedTime = backStackEntry.arguments?.getString("selectedTime") ?: ""
+            val selectedLocation = backStackEntry.arguments?.getString("selectedLocation") ?: ""
 
             SeatSelectionScreen(
-
-                onBackClick = {
-                    navController.popBackStack()
-                },
-
-                onContinueClick = {
-
+                movieTitle = movieTitle,
+                selectedDate = selectedDate,
+                selectedTime = selectedTime,
+                selectedLocation = selectedLocation,
+                onBackClick = { navController.popBackStack() },
+                onContinueClick = { selectedSeats ->
                     navController.navigate("dashboard") {
-
-                        popUpTo("dashboard") {
-                            inclusive = false
-                        }
-
+                        popUpTo("dashboard") { inclusive = false }
                         launchSingleTop = true
                     }
                 }

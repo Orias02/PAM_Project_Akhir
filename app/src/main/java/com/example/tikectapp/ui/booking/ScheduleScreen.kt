@@ -1,6 +1,5 @@
 package com.example.tikectapp.ui.booking
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.FlowRow
@@ -16,8 +15,9 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ScheduleScreen(
+    movieTitle: String, // 1. PERUBAHAN: Menerima parameter judul film dari detail screen
     onBackClick: () -> Unit,
-    onBookingClick: () -> Unit
+    onBookingClick: (String, String, String) -> Unit // 2. PERUBAHAN: Callback sekarang membawa data Tanggal, Jam, dan Lokasi
 ) {
 
     val dates = listOf(
@@ -64,6 +64,15 @@ fun ScheduleScreen(
             text = "🎬 Pilih Jadwal Film",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
+        )
+
+        // Menampilkan judul film yang sedang dipilih secara dinamis
+        Text(
+            text = "Film: $movieTitle",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(vertical = 4.dp)
         )
 
         Text(
@@ -222,9 +231,10 @@ fun ScheduleScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    Text("Film    : $movieTitle")
                     Text("Tanggal : $selectedDate")
-                    Text("Jam : $selectedTime")
-                    Text("Lokasi : $selectedLocation")
+                    Text("Jam     : $selectedTime")
+                    Text("Lokasi  : $selectedLocation")
                 }
             }
 
@@ -233,7 +243,8 @@ fun ScheduleScreen(
 
         Button(
             onClick = {
-                onBookingClick()
+                // 3. PERUBAHAN: Mengirimkan ketiga data pilihan user ke AppNavigation secara dinamis
+                onBookingClick(selectedDate, selectedTime, selectedLocation)
             },
             modifier = Modifier
                 .fillMaxWidth()
